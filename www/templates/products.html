@@ -1,0 +1,47 @@
+<ion-view>
+   <ion-nav-buttons side="right" ng-show="isSearchVisible">
+      <form ng-submit="doSearch()" style="float:right; margin-top: -10px">
+      <ul >
+        <li class="fl item-input"><input type="search" size="8" placeholder="Search" ng-model="searchData.textArea" ng-if="isntPrezzo() && isSearchVisible" ></li>
+        <li class="fl item-input"><input class="line" size="4" type="search" placeholder="Min" ng-model="searchData.minPrice" ng-if="!isntPrezzo() && isSearchVisible " ></li>
+        <li class="fl item-input"><input class="line" size="4" type="search" placeholder="Max" ng-model="searchData.maxPrice" ng-if="!isntPrezzo() && isSearchVisible" ></li>  
+      </ul>
+        <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+      </form>
+    <div id='cssmenu' ng-show="isSearchVisible">  
+      <ul>
+        <li class='active has-sub'><a href='#'></a>
+          <ul>
+          <li class='last'><a href='{{destination}}?criteria=Prezzo'><span>Prezzo</span></a></li>
+          <li class='last'><a href='{{destination}}?criteria=Categoria'><span>Categoria</span></a></li>
+          <li class='last'><a href='{{destination}}?criteria=Nome'><span>Nome</span></a></li>
+          <li class='last'><a href='{{destination}}?criteria=Descrizione'><span>Descrizione</span></a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  <a data-tap-disabled="true" class=" button button-icon icon positive" ng-click="changeSearchState();" ng-class="{'ion-search':!isSearchVisible,'ion-close-circled':isSearchVisible}"></a>  
+    </ion-nav-buttons>
+	
+	    <ion-nav-title ng-show="!isSearchVisible">
+        Prodotti Volantino
+    </ion-nav-title>
+	
+  <ion-content class="has-header">
+      <ion-list>
+	   <ion-item class="fixed-item-dim" ng-repeat="item in items">
+	    <ul class="row">
+        <ion-item style = "width: 100%;" class="item-avatar no-border" ng-click = "selectProduct('{{item.ID_prodotto}}')">
+		<img src="{{item.Immagine}} " />
+		<h2>{{item.Nome}}</h2>
+		<p>{{item.Descrizione}}</p>
+		</ion-item>
+		<ion-item class="no-border">
+		<button class="button icon ion-star button-{{item.state}} " ng-click="starredManager('{{item.ID_prodotto}}')" ></button>
+		</ion-item >
+		</ul>
+      </ion-item>   
+	  </ion-list>
+  <ion-infinite-scroll ng-if="!isStarred" on-infinite="loadMore()" distance="5%"></ion-infinite-scroll> 
+    </ion-content>
+</ion-view>
