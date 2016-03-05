@@ -1,5 +1,5 @@
 //use func;
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ionic-toast'])
 
 .factory('Service', function($http){
 	var items = [];
@@ -131,7 +131,7 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, Service, $state, $http) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, Service, $state, $http,ionicToast) {
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
 	// To listen for when this page is active (for example, to refresh data),
@@ -186,6 +186,7 @@ $scope.showModal = function() {
 $scope.showLogin = function() {
 	$scope.isRegister = false;
 	$scope.operation = 'Login';
+	 ionicToast.show('Please login', 'bottom', false, 2500);
 };
 
 $scope.showRegister = function() {
@@ -210,11 +211,11 @@ $scope.doLogin = function() {
 			$state.go('app.markets'); 
 		},
 		function errorCallback(response){
-			alert('I tuoi dati d\'accesso sono incorretti');
+			ionicToast.show('Errore! I tuoi dati sono incorretti', 'bottom', false, 2500);
 		}
 		);
 	}else {
-		alert('I tuoi dati d\'accesso sono incompleti!');
+			ionicToast.show('Errore! I tuoi dati sono incompleti', 'bottom', false, 2500);
 		Service.DropLoginData(); 
 	}
 }
@@ -229,11 +230,11 @@ $scope.doRegister = function() {
 			$scope.showLogin();
 		},
 		function errorCallback(response){
-			alert('Errore!!');
+			ionicToast.show('Errore! I tuoi dati sono incorretti', 'bottom', false, 2500);
 			$scope.showRegister();
 		});
 	}else {
-		alert('I tuoi dati d\'accesso sono incompleti!');
+		ionicToast.show('Errore! I tuoi dati sono incompleti', 'bottom', false, 2500);
 		$scope.showRegister();
 	}
 }
@@ -532,7 +533,7 @@ $scope.doRegister = function() {
 	}
 })
 
-.controller('StarredFlyersCrtl', function($scope, $state, Service, $ionicHistory) {
+.controller('StarredFlyersCrtl', function($scope, $state, Service, $ionicHistory, ionicToast) {
 	$scope.isStarred = true;
 	var market = Service.GetChosedMarket();
 	var flyers = Service.GetStarredObjects().flyers;
@@ -555,9 +556,6 @@ $scope.doRegister = function() {
 	
 	angular.forEach(flyers, function(flyer){
 		if(flyer['ID_supermercato'] == market['ID_supermercato']){
-			console.log("scelto mark", market);
-			console.log("scelto flyr", flyers);
-			
 			var splittedDate = flyer['Data_Fine'].split("-");
 			var flyDate = new Date(parseInt(splittedDate[2],10),parseInt(splittedDate[1],10)-1,parseInt(splittedDate[0],10));
 			if(flyDate.getTime() > Date.now()){
@@ -574,8 +572,7 @@ $scope.doRegister = function() {
 						i++;
 					}
 				});
-				//toastr.info("Ho cancellato "+i+" prodotti perché scaduti.","Informazione!");
-
+				ionicToast.show("Ho cancellato "+i+" prodotti/o perché scaduti/o", 'bottom', false, 2500);
 			}
 		}
 	});
