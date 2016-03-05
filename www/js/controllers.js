@@ -41,7 +41,7 @@ angular.module('starter.controllers', ['ionic-toast'])
 		},
 		DropLoginData: function(){
 			loginData = {};
-			loginData.BASE_URL = "";
+			loginData.BASE_URL = undefined;
 		},
 		SetChosedMarket: function(data){
 			console.log("data", data);
@@ -195,6 +195,7 @@ $scope.showRegister = function() {
 };
 
 $scope.start = function(){
+	$state.go('app.start'); 
 	Service.DropLoginData();
 	$scope.showLogin();
 	$scope.showModal();
