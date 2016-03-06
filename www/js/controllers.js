@@ -9,12 +9,16 @@ angular.module('starter.controllers', ['ionic-toast', 'ngCordova'])
 	var choosedProdut = {};
 	var isLogged = false;
 	var timerSleep = 200; /* dovrebbero essere ms però boh! */
+	var starredObjects = {};
+
 	
-	try {
-		var starredObjects = JSON.parse(window.localStorage['starredObjects'] || '{}');
+	return {
+		LoadUserData: function(user){
+				try {
+		starredObjects = JSON.parse(window.localStorage['starredObjects'+user] || '{}');
     } catch (e) {
-        var starredObjects = {};
-		window.localStorage['starredObjects'] = JSON.stringify(starredObjects);
+        starredObjects = {};
+		window.localStorage['starredObjects'+user] = JSON.stringify(starredObjects); /* Dovrebbe essere particolarizzato per ogni utente */
     } 
 	
 	var i = 0;
@@ -26,8 +30,7 @@ angular.module('starter.controllers', ['ionic-toast', 'ngCordova'])
 		starredObjects.flyers = [];
 		starredObjects.markets = [];
 	}
-	
-	return {
+		},
 		GetTimerSleep: function(){
 			return timerSleep;
 		},
@@ -78,7 +81,7 @@ angular.module('starter.controllers', ['ionic-toast', 'ngCordova'])
 			});
 			if(!found)
 				starredObjects.markets.push(chosedMarket);
-			window.localStorage['starredObjects'] = JSON.stringify(starredObjects);
+			window.localStorage['starredObjects'+loginData.username] = JSON.stringify(starredObjects);
 		},
 		RemoveStarredObject: function(item){ /* Attenzione funziona solo in navigazione, devono essere selezionati in precedenza volantino e supermercato */
 			var index = starredObjects.products.indexOf(item);
@@ -106,14 +109,14 @@ angular.module('starter.controllers', ['ionic-toast', 'ngCordova'])
 			if(!moreFlyers)
 				starredObjects.markets.splice(index, 1);
 			
-			window.localStorage['starredObjects'] = JSON.stringify(starredObjects);
+			window.localStorage['starredObjects'+loginData.username] = JSON.stringify(starredObjects);
 		},
 		GetStarredObjects: function(){
 			return starredObjects;
 		},
 		DropStarredObjects: function(){
 			starredObjects = {};
-			window.localStorage['starredObjects'] = JSON.stringify(starredObjects);
+			window.localStorage['starredObjects'+loginData.username] = JSON.stringify(starredObjects);
 		},
 		GetItems: function(url){
 			console.log("Call getItems");
@@ -209,6 +212,7 @@ $scope.doLogin = function() {
 		$http.get(loginData.BASE_URL).then(
 		function successCallback(response){ /* Codice di errore 200-299 è considerato success e viene chiamata questa funzione */
 			$scope.closeModal(true);
+			Service.LoadUserData($scope.loginData.username);
 			$state.go('app.markets'); 
 		},
 		function errorCallback(response){
@@ -695,33 +699,13 @@ $scope.doRegister = function() {
 	$scope.loginData = Service.GetLoginData();
 	$scope.Market = Service.GetChosedMarket();
 	$scope.flyer = Service.GetChosedFlyer();
-	//$scope.file = [];
-	//$scope.pdfURL = [];
-	
-	// $http.get(/*'http://192.168.1.101/docDownload'*/$scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {responseType: 'arraybuffer', headers: {'Accept':'application/pdf'}}).success(function (data) {
-          /* var str = window.atob(data.pdf);
-		  console.log("STR", str);*/
-		   // $scope.file = new Blob([data], {type: 'application/pdf'});
-           // var fileURL = URL.createObjectURL($scope.file);
-		   // $scope.pdf = fileURL;
-		   // console.log(fileURL);
-    // });
 	$http.get($scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {headers: {'Accept':'application/pdf'}}).success(function (data) {
-		   $scope.pdfURL = "http://docs.google.com/viewer?embedded=true&url="+"http://"+$scope.loginData.ip+""+data.results.url;
+		   $scope.pdfURL = "http://docs.google.com/viewer?embedded=true&url="+encodeURIComponent("http://"+$scope.loginData.ip+":"+$scope.loginData.port+""+data.results.url);
+		   $scope.data = data.results;
 		   console.log($scope.pdfURL);
     });
 	
 	$scope.download = function(){
 
 	}
-/*	
-	
-	$cordovaFile.writeFile(cordova.file.dataDirectory, "file.txt", "text", true)
-      .then(function (success) {
-        console.log(success, 'alo');
-      }, function (error) {
-        // error
-      });
-*/
-	
 });

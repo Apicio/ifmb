@@ -29,7 +29,18 @@
 		echo '/{user}/{pass}/{market}/FlyerList/{page}/<br>';
 		echo '/{user}/{pass}/{market}/{flyer}/Products/{page}/<br>';
 		echo '/{user}/{pass}/{market}/{flyer}/<br>';
-	    echo '/SignUp/<br>';
+	    echo '/SignUp/<br><br>';
+		echo 'DEBUG:<br>';
+		require_once 'lib/mysql.php';		
+		$db = connect_db();
+		$sql = "SELECT * FROM utenti";
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		$resultSet = $stmt->get_result();
+		$products = $resultSet->fetch_all(MYSQLI_ASSOC);//fetch_array(MYSQLI_ASSOC);
+		$db = null;
+		$json_array = array("results" => $products);
+		echo(json_encode($json_array));
 	});
 	
 	/* Non gestiamo le sessioni, il client deve inviare ogni volta le credenziali di accesso.
