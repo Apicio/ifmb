@@ -125,12 +125,12 @@
 		$db = connect_db();
 		$itemsToShow = 10;
 		$offset = $args['page']*$itemsToShow;
-		$basepath = getcwd()."/res";
+		//$basepath = getcwd()."/res";
 		
 		if(checkCredentials($args['user'], $args['pass'], $db)){
 			switch($request->getHeaderLine('Accept')){
-				case "application/pdf":
-				$path = $basepath."/market_".$args['market']."/flyer_".$args['flyer']."/pdf_".$args['flyer'].".pdf";
+				case "application/pdf": 
+			/*	$path = $basepath."/market_".$args['market']."/flyer_".$args['flyer']."/pdf_".$args['flyer'].".pdf";
 				
 				ob_clean();
 				ob_start();
@@ -151,7 +151,28 @@
 					$response = $response->withHeader('Content-type', 'application/json');
 					$response = $response->withStatus(404);
 					$message =  '{"message": {"text": "'.$e->getMessage().'"}}';
-					$response = $response->write($message);
+					$response = $response->write($message); 
+					ob_clean();
+					ob_start();
+					
+				*/
+				$sourcePATH = getcwd()."/res/market_".$args['market']."/flyer_".$args['flyer']."/pdf_".$args['flyer'].".pdf";
+				$shaName = 'pdf_'.sha1($args['user'].$args['pass'].'pdf_'.$args['flyer']);
+				$destinationPATH = getcwd()."/public/".$shaName.".pdf";
+				try{
+					if(!readfile($sourcePATH)) {
+						throw new Exception('MalformedURLException');
+					}
+					ob_clean();
+					copy($sourcePATH,$destinationPATH);
+					$response = $response->withStatus(200);
+					$response = $response->withHeader('Content-type', 'application/json'); 
+					$response = $response->write('{"results": {"name": "pdf_'.$args['flyer'].'.pdf", "url": "/'.$shaName.'.pdf"}}');
+				}catch(Exception $e) {
+					$response = $response->withHeader('Content-type', 'application/json');
+					$response = $response->withStatus(404);
+					$message =  '{"message": {"text": "'.$e->getMessage().'"}}';
+					$response = $response->write($message); 
 				}
 				break;
 				case "application/json": default:
@@ -251,3 +272,21 @@
 		return $response;
 	});
 	
+	$app->get('/docDownload', function ($request, $response, $args){
+		$basepath = getcwd()."/res";
+		$path = $basepath."/market_1/flyer_1/pdf_1.pdf";
+	
+		$response = $response->withHeader('Content-Transfer-Encoding','binary');
+		$response = $response->withHeader('Content-type', 'application/json'); 
+		$response = $response->withHeader('Content-Description','File Transfer'); 	
+		$response = $response->withHeader('Expires','0');
+		$response = $response->withHeader('Cache-Control', 'must-revalidate'); 
+		$response = $response->withHeader('Pragma','public'); 
+
+		$fileData = file_get_contents($path);
+		$base64 = base64_encode($fileData);
+		$toRet = array();
+		$toRet['pdf'] = $base64;
+		$toRet['customKey'] = "My Custom Value";
+		echo json_encode($toRet);
+	});

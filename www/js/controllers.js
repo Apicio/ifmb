@@ -695,11 +695,31 @@ $scope.doRegister = function() {
 	$scope.loginData = Service.GetLoginData();
 	$scope.Market = Service.GetChosedMarket();
 	$scope.flyer = Service.GetChosedFlyer();
-	$scope.pdf = [];
+	//$scope.file = [];
+	$scope.pdfURL = [];
 	
-	$http.get($scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {responseType: 'arraybuffer', headers: {'Accept':'application/pdf'}}).success(function (data) {
-           var file = new Blob([data], {type: 'application/pdf'});
-           var fileURL = URL.createObjectURL(file);
-			$scope.pdf = fileURL;
+	// $http.get(/*'http://192.168.1.101/docDownload'*/$scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {responseType: 'arraybuffer', headers: {'Accept':'application/pdf'}}).success(function (data) {
+          /* var str = window.atob(data.pdf);
+		  console.log("STR", str);*/
+		   // $scope.file = new Blob([data], {type: 'application/pdf'});
+           // var fileURL = URL.createObjectURL($scope.file);
+		   // $scope.pdf = fileURL;
+		   // console.log(fileURL);
+    // });
+	$http.get($scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {headers: {'Accept':'application/pdf'}}).success(function (data) {
+		   
+		   $scope.pdfURL ="https://docs.google.com/gview?embedded=true&url="+encodeURIComponent("http://"+$scope.loginData.ip+":"+$scope.loginData.port+""+data.results.url);
+		   console.log($scope.pdfURL);
     });
+	
+	
+/*	
+	$cordovaFile.writeFile(cordova.file.dataDirectory, "file.txt", "text", true)
+      .then(function (success) {
+        console.log(success, 'alo');
+      }, function (error) {
+        // error
+      });
+*/
+	
 });
