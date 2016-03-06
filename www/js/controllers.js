@@ -710,6 +710,10 @@ $scope.doRegister = function() {
 		   $scope.pdfURL = "http://docs.google.com/viewer?embedded=true&url="+"http://"+$scope.loginData.ip+""+data.results.url;
 		   console.log($scope.pdfURL);
     });
+	
+	$scope.download = function(){
+
+	}
 /*	
 	
 	$cordovaFile.writeFile(cordova.file.dataDirectory, "file.txt", "text", true)

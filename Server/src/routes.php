@@ -22,6 +22,16 @@
 		}	
 	}
 	
+	$app->get('/', function(){
+		echo "API Description:<br>";
+		echo "/{user}/{pass}/<br>";
+		echo '/{user}/{pass}/MarketList/{page}/<br>';
+		echo '/{user}/{pass}/{market}/FlyerList/{page}/<br>';
+		echo '/{user}/{pass}/{market}/{flyer}/Products/{page}/<br>';
+		echo '/{user}/{pass}/{market}/{flyer}/<br>';
+	    echo '/SignUp/<br>';
+	});
+	
 	/* Non gestiamo le sessioni, il client deve inviare ogni volta le credenziali di accesso.
 	Il server risponde solo se le credenziali sono corrette! Non abbiamo bisogno di una funzione di login esplicita*/
 	
@@ -270,23 +280,4 @@
 			}
 		}
 		return $response;
-	});
-	
-	$app->get('/docDownload', function ($request, $response, $args){
-		$basepath = getcwd()."/res";
-		$path = $basepath."/market_1/flyer_1/pdf_1.pdf";
-	
-		$response = $response->withHeader('Content-Transfer-Encoding','binary');
-		$response = $response->withHeader('Content-type', 'application/json'); 
-		$response = $response->withHeader('Content-Description','File Transfer'); 	
-		$response = $response->withHeader('Expires','0');
-		$response = $response->withHeader('Cache-Control', 'must-revalidate'); 
-		$response = $response->withHeader('Pragma','public'); 
-
-		$fileData = file_get_contents($path);
-		$base64 = base64_encode($fileData);
-		$toRet = array();
-		$toRet['pdf'] = $base64;
-		$toRet['customKey'] = "My Custom Value";
-		echo json_encode($toRet);
 	});
