@@ -1,5 +1,5 @@
 //use func;
-angular.module('starter.controllers', ['ionic-toast'])
+angular.module('starter.controllers', ['ionic-toast', 'ngCordova'])
 
 .factory('Service', function($http){
 	var items = [];
@@ -691,12 +691,12 @@ $scope.doRegister = function() {
 	}
 })
 
-.controller('PDFCtrl',  function($scope, Service, $state, $http) {
+.controller('PDFCtrl',  function($scope, Service, $state, $http, $cordovaFile, $sce) {
 	$scope.loginData = Service.GetLoginData();
 	$scope.Market = Service.GetChosedMarket();
 	$scope.flyer = Service.GetChosedFlyer();
 	//$scope.file = [];
-	$scope.pdfURL = [];
+	//$scope.pdfURL = [];
 	
 	// $http.get(/*'http://192.168.1.101/docDownload'*/$scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {responseType: 'arraybuffer', headers: {'Accept':'application/pdf'}}).success(function (data) {
           /* var str = window.atob(data.pdf);
@@ -707,13 +707,11 @@ $scope.doRegister = function() {
 		   // console.log(fileURL);
     // });
 	$http.get($scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {headers: {'Accept':'application/pdf'}}).success(function (data) {
-		   
-		   $scope.pdfURL ="https://docs.google.com/gview?embedded=true&url="+encodeURIComponent("http://"+$scope.loginData.ip+":"+$scope.loginData.port+""+data.results.url);
+		   $scope.pdfURL = "http://docs.google.com/viewer?embedded=true&url="+"http://"+$scope.loginData.ip+""+data.results.url;
 		   console.log($scope.pdfURL);
     });
-	
-	
 /*	
+	
 	$cordovaFile.writeFile(cordova.file.dataDirectory, "file.txt", "text", true)
       .then(function (success) {
         console.log(success, 'alo');

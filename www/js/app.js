@@ -24,7 +24,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
 })
 
-.config(function($stateProvider, $urlRouterProvider) {  
+.config(function($stateProvider, $urlRouterProvider, $sceProvider) { 
+  $sceProvider.enabled(false);
   $stateProvider
     .state('app', {
     url: '/app',
