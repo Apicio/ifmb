@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('starter', ['ionic', 'starter.controllers', 'downgularJS'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -24,7 +24,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
 })
 
-.config(function($stateProvider, $urlRouterProvider, $sceProvider) { 
+.config(function($stateProvider, $urlRouterProvider, $sceProvider, downgularFileToolsProvider) { 
+	/* configure storage details*/
+	downgularFileToolsProvider.usePersistentMemory(true);
+	downgularFileToolsProvider.setStorageQuota(20*1024*1024); //in order to request 20MB
   $sceProvider.enabled(false);
   $stateProvider
     .state('app', {

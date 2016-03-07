@@ -1,5 +1,5 @@
 //use func;
-angular.module('starter.controllers', ['ionic-toast', 'ngCordova'])
+angular.module('starter.controllers', ['ionic-toast', 'downgularJS'])
 
 .factory('Service', function($http){
 	var items = [];
@@ -695,17 +695,26 @@ $scope.doRegister = function() {
 	}
 })
 
-.controller('PDFCtrl',  function($scope, Service, $state, $http, $cordovaFile, $sce) {
+.controller('PDFCtrl',  function($scope, Service, $http, downgularQueue, ionicToast) {
 	$scope.loginData = Service.GetLoginData();
 	$scope.Market = Service.GetChosedMarket();
 	$scope.flyer = Service.GetChosedFlyer();
+		
 	$http.get($scope.loginData.BASE_URL+""+$scope.Market['ID_supermercato']+"/"+$scope.flyer['ID_volantino']+"/Products/0/", {headers: {'Accept':'application/pdf'}}).success(function (data) {
 		   $scope.pdfURL = "http://docs.google.com/viewer?embedded=true&url="+encodeURIComponent("http://"+$scope.loginData.ip+":"+$scope.loginData.port+""+data.results.url);
+		   $scope.pdfDownload = "http://"+$scope.loginData.ip+":"+$scope.loginData.port+""+data.results.url;
 		   $scope.data = data.results;
 		   console.log($scope.pdfURL);
     });
 	
-	$scope.download = function(){
-
+	$scope.downloadComplete = function(){
+		ionicToast.show("PDF Scaricato in Downloads", 'bottom', false, 2500);
 	}
+	
+	$scope.download = function(){
+	var myQueue = downgularQueue.build('queue', 'downloads', $scope.downloadComplete);
+		myQueue.addPriorityFileDownload('pdf', $scope.pdfDownload, '/downloads');
+		ionicToast.show("Inizio download..", 'bottom', false, 800);
+		myQueue.startDownloading();
+	}	
 });
